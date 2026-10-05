@@ -18,8 +18,8 @@ export function TodayRoute({ eyebrow, text, stops, stats }: { eyebrow: string; t
       const el = root.current;
       if (!el) return;
       const q = gsap.utils.selector(el);
-      const path = q("[data-route]")[0] as SVGPathElement;
-      const bike = q("[data-bike]")[0] as SVGGElement;
+      const path = q("[data-route]")[0] as unknown as SVGPathElement;
+      const bike = q("[data-bike]")[0] as unknown as SVGGElement;
       const len = path.getTotalLength();
       const place = (t: number) => {
         const p = path.getPointAtLength(len * t);

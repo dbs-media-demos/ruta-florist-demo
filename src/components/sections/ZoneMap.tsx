@@ -21,8 +21,8 @@ export function ZoneMap({ locale, value, onSelect, className }: { locale: Locale
     () => {
       if (prefersReducedMotion() || !root.current) return;
       const q = gsap.utils.selector(root);
-      const paths = q("[data-zone-path]") as SVGPathElement[];
-      (q("[data-river]") as SVGPathElement[]).forEach((r) => {
+      const paths = q("[data-zone-path]") as unknown as SVGPathElement[];
+      (q("[data-river]") as unknown as SVGPathElement[]).forEach((r) => {
         const len = r.getTotalLength();
         gsap.set(r, { strokeDasharray: len, strokeDashoffset: len });
       });
