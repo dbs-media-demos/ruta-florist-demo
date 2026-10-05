@@ -1,26 +1,594 @@
 @import "tailwindcss";
 
+/* ────────────────────────────────────────────────────────────────
+   Ruta: design tokens
+   Paper and linen, a deep garden green as ink, one living accent
+   (poppy) that can shift with the season. Sections switch palettes
+   with .theme-*; components read the semantic tokens.
+   ──────────────────────────────────────────────────────────────── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f6f2ea;
+  --linen: #ece5d8;
+  --sand: #ddd3c2;
+  --ink: #17271f;
+  --ink-2: #0f1b15;
+  --ink-3: #213529;
+  --moss: #3e5a47;
+  --sage: #a7b5a2;
+  --poppy: #e0533a;
+  --poppy-ink: #b23a22;
+  --poppy-soft: #f08a70;
+  --blush: #f2cdbe;
+  --petal: #f7e3da;
+  --stone: #e9e7e2;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-bloom: cubic-bezier(0.22, 1.2, 0.36, 1);
+
+  --gutter: clamp(1rem, 3.6vw, 3.5rem);
+  --header-h: 4.5rem;
+  --ribbon-h: 2.25rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  .theme-paper {
+    --bg: var(--paper);
+    --fg: var(--ink);
+    --muted: #56625a;
+    --line: color-mix(in oklab, var(--ink) 14%, transparent);
+    --surface: #fbf9f4;
+    --surface-2: var(--linen);
+    --accent: var(--poppy-ink);
+    --accent-fill: var(--poppy);
+    --on-accent: #fff;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+  .theme-linen {
+    --bg: var(--linen);
+    --fg: var(--ink);
+    --muted: #515d55;
+    --line: color-mix(in oklab, var(--ink) 15%, transparent);
+    --surface: var(--paper);
+    --surface-2: var(--sand);
+    --accent: var(--poppy-ink);
+    --accent-fill: var(--poppy);
+    --on-accent: #fff;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+  .theme-blush {
+    --bg: var(--petal);
+    --fg: var(--ink);
+    --muted: #59544f;
+    --line: color-mix(in oklab, var(--ink) 14%, transparent);
+    --surface: #fdf4ef;
+    --surface-2: var(--blush);
+    --accent: var(--poppy-ink);
+    --accent-fill: var(--poppy);
+    --on-accent: #fff;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+  .theme-ink {
+    --bg: var(--ink);
+    --fg: var(--paper);
+    --muted: #b9c2b9;
+    --line: color-mix(in oklab, var(--paper) 15%, transparent);
+    --surface: var(--ink-3);
+    --surface-2: #2b4335;
+    --accent: var(--poppy-soft);
+    --accent-fill: var(--poppy);
+    --on-accent: #fff;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+  /* Sympathy: muted stone, no accent heat */
+  .theme-calm {
+    --bg: var(--stone);
+    --fg: #26302b;
+    --muted: #535c57;
+    --line: color-mix(in oklab, #26302b 14%, transparent);
+    --surface: #f3f2ef;
+    --surface-2: #dddad3;
+    --accent: #3e5a47;
+    --accent-fill: #3e5a47;
+    --on-accent: #fff;
+    background-color: var(--bg);
+    color: var(--fg);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-paper: var(--paper);
+  --color-linen: var(--linen);
+  --color-sand: var(--sand);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-moss: var(--moss);
+  --color-sage: var(--sage);
+  --color-poppy: var(--poppy);
+  --color-poppy-ink: var(--poppy-ink);
+  --color-poppy-soft: var(--poppy-soft);
+  --color-blush: var(--blush);
+  --color-petal: var(--petal);
+  --color-stone: var(--stone);
+
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-on-accent: var(--on-accent);
+
+  --font-sans: var(--font-albert), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-gloock), Georgia, serif;
+  --font-hand: var(--font-caveat), cursive;
+
+  --ease-expo: var(--ease-out-expo);
+  --ease-quart: var(--ease-in-out-quart);
+  --ease-bloom: var(--ease-bloom);
+}
+
+/* ─────────────────────────── base ─────────────────────────── */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-padding-top: calc(var(--header-h) + var(--ribbon-h) + 1rem);
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--poppy);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--poppy);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  img {
+    user-select: none;
+  }
+  button {
+    cursor: pointer;
+  }
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 1560px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* ───────── type ───────── */
+  .t-display {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(3.2rem, 11.5vw, 12.5rem);
+    line-height: 0.88;
+    letter-spacing: -0.035em;
+  }
+  .t-h1 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 7.2vw, 7.25rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .t-h2 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(2.1rem, 4.8vw, 4.75rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  .t-h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1.45rem, 2.3vw, 2.15rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+  .t-h4 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 1.3rem;
+    line-height: 1.2;
+  }
+  .t-lead {
+    font-size: clamp(1.08rem, 1.45vw, 1.32rem);
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .t-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .t-hand {
+    font-family: var(--font-hand);
+    font-weight: 500;
+    line-height: 1.15;
+  }
+  .t-price {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .prose-ruta p + p {
+    margin-top: 1em;
+  }
+
+  /* ───────── controls ───────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3.1rem;
+    padding: 0 1.6rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.005em;
+    transition:
+      background-color 0.35s var(--ease-out-expo),
+      color 0.35s var(--ease-out-expo),
+      border-color 0.35s var(--ease-out-expo),
+      transform 0.35s var(--ease-out-expo);
+    white-space: nowrap;
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn-primary {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .btn-primary:hover {
+    background: var(--poppy-ink);
+    color: #fff;
+  }
+  .btn-accent {
+    background: var(--poppy-ink);
+    color: #fff;
+  }
+  .btn-accent:hover {
+    background: var(--ink);
+  }
+  .theme-ink .btn-accent:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .btn-ghost {
+    border: 1px solid var(--line);
+    color: var(--fg);
+  }
+  .btn-ghost:hover {
+    border-color: var(--fg);
+  }
+  .btn[disabled] {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .link-u {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.5s var(--ease-out-expo);
+  }
+  .link-u:hover,
+  .link-u:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  .field {
+    width: 100%;
+    min-height: 3.1rem;
+    border-radius: 0.9rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    padding: 0.75rem 1rem;
+    color: var(--fg);
+    transition: border-color 0.25s;
+  }
+  .field:hover {
+    border-color: color-mix(in oklab, var(--fg) 35%, transparent);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--fg);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--poppy) 22%, transparent);
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--poppy-ink);
+  }
+  .field-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .field-error {
+    margin-top: 0.35rem;
+    font-size: 0.82rem;
+    color: var(--poppy-ink);
+  }
+  .theme-ink .field-error {
+    color: var(--poppy-soft);
+  }
+
+  /* pill radio (sizes, palettes, slots) */
+  .chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 2.9rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition:
+      border-color 0.25s,
+      background 0.25s,
+      color 0.25s;
+    cursor: pointer;
+  }
+  .chip:hover {
+    border-color: var(--fg);
+  }
+  .chip:has(input:checked),
+  .chip[aria-pressed="true"],
+  .chip[aria-checked="true"] {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .chip:has(input:focus-visible) {
+    outline: 2px solid var(--poppy);
+    outline-offset: 2px;
+  }
+  .chip:has(input:disabled) {
+    opacity: 0.45;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+  .sr-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+
+  /* ───────── image frames ───────── */
+  .frame {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-2);
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* marquee */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee var(--marquee-d, 38s) linear infinite;
+  }
+  .marquee-wrap:hover .marquee {
+    animation-play-state: paused;
+  }
+
+  /* gentle sway for stems and petals */
+  .sway {
+    transform-origin: 50% 100%;
+    animation: sway 6s ease-in-out infinite alternate;
+  }
+}
+
+/* ─────────────────────────── CSS-only intros (above the fold) ───────────────────────────
+   Transform-only so LCP never waits on an opacity fade. */
+
+@keyframes rise {
+  from {
+    transform: translate3d(0, 0.55em, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes rise-sm {
+  from {
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes unfold {
+  from {
+    transform: scale(0.94) rotate(-1.5deg);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@keyframes sway {
+  from {
+    transform: rotate(-2.2deg);
+  }
+  to {
+    transform: rotate(2.2deg);
+  }
+}
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes heart-pop {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes drift {
+  from {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(var(--dx, 40px), 110vh, 0) rotate(var(--rot, 260deg));
+  }
+}
+
+@layer components {
+  .anim-heading {
+    animation: rise 1.25s var(--ease-out-expo) both;
+    animation-delay: var(--d, 0s);
+  }
+  .anim-fade {
+    animation: rise-sm 1.2s var(--ease-out-expo) both;
+    animation-delay: var(--d, 0s);
+  }
+  .anim-unfold {
+    animation: unfold 1.6s var(--ease-out-expo) both;
+    animation-delay: var(--d, 0s);
+  }
+  .line-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+    margin-bottom: -0.06em;
+  }
+  .line-mask > span {
+    display: block;
+  }
+  .bump {
+    animation: bump 0.55s var(--ease-bloom);
+  }
+  .heart-pop {
+    animation: heart-pop 0.5s var(--ease-bloom);
+  }
+}
+
+/* ─────────────────────────── view transitions ───────────────────────────
+   Page changes: the old page fades fast, the new one rises gently.
+   `.morph` pairs (grid card → product hero) glide with a soft blur. */
+
+::view-transition-old(.page) {
+  animation: 180ms ease-out both vt-fade-out;
+}
+::view-transition-new(.page) {
+  animation:
+    420ms var(--ease-out-expo) 120ms both vt-fade-in,
+    600ms var(--ease-out-expo) both vt-rise;
+}
+::view-transition-group(.morph) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--ease-out-expo);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: vt-soft;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes vt-rise {
+  from {
+    transform: translateY(24px);
+  }
+}
+@keyframes vt-soft {
+  40% {
+    filter: blur(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
