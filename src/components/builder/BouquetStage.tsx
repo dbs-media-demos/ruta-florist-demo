@@ -44,7 +44,7 @@ export const BouquetStage = forwardRef<HTMLDivElement, { items: StagedStem[]; pa
           style={{ height: `${s.height}%`, zIndex: s.z, transform: `translateX(-50%) rotate(${s.angle}deg)` }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- transparent cut-outs, already sized */}
-          <img src={s.image} alt="" className="h-full w-auto max-w-none select-none drop-shadow-[0_10px_14px_rgba(15,27,21,0.18)]" draggable={false} loading="lazy" />
+          <img src={s.image} alt="" className="stem-in h-full w-auto max-w-none select-none drop-shadow-[0_10px_14px_rgba(15,27,21,0.18)]" draggable={false} loading="lazy" />
         </div>
       ))}
       {/* front panel: the wrap folds over the stems */}

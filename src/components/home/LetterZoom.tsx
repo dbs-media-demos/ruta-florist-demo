@@ -10,7 +10,7 @@ import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
  * Scrolling flies the camera into the stroke of the "o" until the studio fills the screen,
  * then the story card rises over it.
  */
-export function LetterZoom({ word, eyebrow, title, text, link, href, image }: { word: string; eyebrow: string; title: string; text: string; link: string; href: string; image: string }) {
+export function LetterZoom({ word, eyebrow, title, text, link, href, image, charIndex = 1, caption = "Strahinjića bana 19" }: { word: string; eyebrow: string; title: string; text: string; link: string; href: string; image: string; charIndex?: number; caption?: string }) {
   const root = useRef<HTMLElement>(null);
   const svg = useRef<SVGSVGElement>(null);
   const textEl = useRef<SVGTextElement>(null);
@@ -28,7 +28,7 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image }: { 
       }
       const origin = () => {
         // the left stroke of the first "o"
-        const ext = t.getExtentOfChar(1);
+        const ext = t.getExtentOfChar(charIndex);
         const ctm = t.getScreenCTM();
         const box = s.getBoundingClientRect();
         if (!ctm) return "50% 50%";
@@ -79,7 +79,7 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image }: { 
         </svg>
         <div data-word-caption className="wrap pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+var(--ribbon-h)+1.5rem)] flex justify-between text-paper/80">
           <p className="t-eyebrow">{eyebrow}</p>
-          <p className="t-eyebrow">Strahinjića bana 19</p>
+          <p className="t-eyebrow">{caption}</p>
         </div>
         <div data-story className="wrap absolute inset-x-0 bottom-8 opacity-0 motion-reduce:opacity-100 md:bottom-14">
           <div className="theme-paper max-w-xl rounded-[1.75rem] p-7 shadow-[0_30px_80px_-30px_rgba(15,27,21,0.5)] md:p-10">

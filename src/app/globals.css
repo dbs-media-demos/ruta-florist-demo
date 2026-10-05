@@ -507,7 +507,17 @@
   }
 }
 
+@keyframes stem-in {
+  from {
+    transform: translateY(18%) scale(0.7);
+    opacity: 0;
+  }
+}
+
 @layer components {
+  .stem-in {
+    animation: stem-in 0.9s var(--ease-bloom) both;
+  }
   .anim-heading {
     animation: rise 1.25s var(--ease-out-expo) both;
     animation-delay: var(--d, 0s);
