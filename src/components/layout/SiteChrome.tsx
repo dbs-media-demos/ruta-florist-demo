@@ -13,9 +13,8 @@ import { Footer } from "./Footer";
 import { DemoPill } from "./DemoPill";
 import { MobileBar } from "./MobileBar";
 import { Announcer } from "./Announcer";
-import { CartDrawer } from "@/components/cart/CartDrawer";
-import { SearchOverlay, type SearchItem } from "@/components/shop/SearchOverlay";
-import { QuickView } from "@/components/shop/QuickView";
+import type { SearchItem } from "@/components/shop/SearchOverlay";
+import { Overlays } from "./Overlays";
 
 /** Header, the page (with view transitions), footer, bag drawer, search, quick view and demo pill. */
 export function SiteChrome({ locale, children }: { locale: Locale; children: ReactNode }) {
@@ -80,9 +79,7 @@ export function SiteChrome({ locale, children }: { locale: Locale; children: Rea
         phone={site.phone}
         hideOn={[pagePaths.checkout[locale], locale === "sr" ? "/proizvod/" : "/en/product/"]}
       />
-      <CartDrawer locale={locale} crossSells={crossSells} cartHref={h("cart")} checkoutHref={h("checkout")} shopHref={h("shop")} />
-      <SearchOverlay locale={locale} items={searchItems} />
-      <QuickView locale={locale} />
+      <Overlays locale={locale} crossSells={crossSells} searchItems={searchItems} cartHref={h("cart")} checkoutHref={h("checkout")} shopHref={h("shop")} />
       <Announcer />
       <DemoPill label={d.demoPill} dismiss={d.dismiss} />
     </>
