@@ -20,7 +20,7 @@ export function fan(items: StagedStem[]) {
     const spread = s.kind === "green" ? 34 : 24;
     const centerBias = s.head > 1.2 ? 0.25 : 1;
     const angle = (t - 0.5) * 2 * spread * centerBias + (i % 2 ? 3 : -3);
-    const height = s.kind === "green" ? 78 : 70 - (s.head - 1) * 14 + (i % 3) * 3;
+    const height = s.kind === "green" ? 64 : 56 - (s.head - 1) * 22 + (i % 3) * 3;
     return { ...s, angle, height, z: s.kind === "green" ? 1 + i : 10 + Math.round(s.head * 10) + (i % 3) };
   });
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
@@ -14,6 +14,15 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image, char
   const root = useRef<HTMLElement>(null);
   const svg = useRef<SVGSVGElement>(null);
   const textEl = useRef<SVGTextElement>(null);
+  // the giant mask text is only mounted near the viewport (keeps it out of the LCP race)
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && (setNear(true), io.disconnect()), { rootMargin: "150% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   useGSAP(
     () => {
@@ -56,7 +65,7 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image, char
         .set(s, { opacity: 0 }, 0.6)
         .fromTo(q("[data-story]"), { y: 120, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 0.66);
     },
-    { scope: root },
+    { scope: root, dependencies: [near] },
   );
 
   return (
@@ -66,6 +75,7 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image, char
           <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-ink/15" />
         </div>
+        {near && (
         <svg ref={svg} viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full will-change-transform" aria-hidden>
           <defs>
             <mask id="dorcol-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height="900">
@@ -77,6 +87,8 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image, char
           </defs>
           <rect width="1600" height="900" fill="#17271f" mask="url(#dorcol-mask)" />
         </svg>
+        )}
+        {!near && <div aria-hidden className="absolute inset-0 bg-ink" />}
         <div data-word-caption className="wrap pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+var(--ribbon-h)+1.5rem)] flex justify-between text-paper/80">
           <p className="t-eyebrow">{eyebrow}</p>
           <p className="t-eyebrow">{caption}</p>

@@ -13,9 +13,11 @@ export function PaperCard({ text, from, className, placeholder }: { text: string
   return (
     <div className={clsx("relative rounded-[6px] bg-[#fbf8f1] px-5 pb-5 pt-6 text-ink shadow-[0_14px_30px_-12px_rgba(15,27,21,0.35)]", className)}>
       <span aria-hidden className="absolute left-1/2 top-2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-sand" />
-      <p className={clsx("t-hand min-h-[3.2em] whitespace-pre-wrap break-words text-[1.45rem]", !text && "text-ink/35")}>{text || placeholder}</p>
+      <p className={clsx("t-hand min-h-[3.2em] whitespace-pre-wrap break-words text-[1.45rem]", !text && "text-[#5f6862]")}>{text || placeholder}</p>
       <p className="t-hand mt-2 text-right text-[1.25rem] text-poppy-ink">{from ? `— ${from}` : ""}</p>
-      <span aria-hidden className="absolute bottom-2 left-4 font-serif text-[0.65rem] tracking-[0.2em] text-ink/30">RUTA</span>
+      <svg aria-hidden viewBox="0 0 32 40" className="absolute bottom-2 left-4 h-4 w-auto text-ink/25">
+        <path d="M16 12 C 12.6 9.4, 12.4 4.2, 16 2.2 C 19.6 4.2, 19.4 9.4, 16 12 Z" fill="currentColor" />
+      </svg>
     </div>
   );
 }

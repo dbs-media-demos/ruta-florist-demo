@@ -19,7 +19,8 @@ export function Marquee({ items, tone = "ink" }: { items: string[]; tone?: "ink"
   const row = [...items, ...items, ...items];
   return (
     <div className={tone === "ink" ? "bg-ink text-paper" : "bg-poppy-ink text-white"}>
-      <div className="marquee-wrap overflow-hidden py-4" aria-label={items.join(" · ")}>
+      <p className="sr-only">{items.join(" · ")}</p>
+      <div className="marquee-wrap overflow-hidden py-4">
         <ul className="marquee items-center" style={{ ["--marquee-d" as string]: "40s" }} aria-hidden>
           {[...row, ...row].map((t, i) => (
             <li key={i} className="flex shrink-0 items-center gap-6 pr-6 font-serif text-xl md:text-2xl">

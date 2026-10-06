@@ -21,7 +21,7 @@ export const zones: Zone[] = [
     id: "stari-grad", name: "Stari grad", central: true, price: 0,
     hoods: { sr: "Dorćol, Kosančićev venac, Skadarlija", en: "Dorćol, Kosančićev venac, Skadarlija" },
     eta: { sr: "za 90 min", en: "within 90 min" },
-    path: "M300 150 L352 128 L384 162 L372 214 L326 226 L296 196 Z", label: [336, 178],
+    path: "M300 150 L352 128 L384 162 L372 214 L326 226 L296 196 Z", label: [340, 204],
   },
   {
     id: "vracar", name: "Vračar", central: true, price: 350,
@@ -81,4 +81,4 @@ export const rivers = {
 
 export const zoneById = (id: string) => zones.find((z) => z.id === id);
 
-export const studioPin: [number, number] = [334, 166];
+export const studioPin: [number, number] = [330, 162];

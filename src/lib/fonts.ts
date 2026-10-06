@@ -22,6 +22,7 @@ export const albert = Albert_Sans({
 });
 
 export const caveat = Caveat({
+  weight: "500",
   subsets: ["latin"],
   variable: "--font-caveat",
   display: "swap",

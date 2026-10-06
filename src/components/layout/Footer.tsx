@@ -123,9 +123,11 @@ export function Footer({ locale }: { locale: Locale }) {
       </div>
 
       <div className="wrap relative mt-16">
-        <p aria-hidden className="pointer-events-none select-none font-serif text-[30vw] leading-[0.78] tracking-[-0.05em] text-paper/[0.07] md:text-[23vw]">
-          Ruta
-        </p>
+        <svg aria-hidden viewBox="0 0 1000 300" className="pointer-events-none w-full select-none">
+          <text x="0" y="250" fontSize="330" letterSpacing="-16" fill="currentColor" opacity="0.07" style={{ fontFamily: "var(--font-gloock), Georgia, serif" }}>
+            Ruta
+          </text>
+        </svg>
         <Mark className="absolute right-[var(--gutter)] top-[8%] h-[16vw] w-auto text-paper/[0.08]" accent="color-mix(in oklab, var(--poppy) 40%, transparent)" />
       </div>
 

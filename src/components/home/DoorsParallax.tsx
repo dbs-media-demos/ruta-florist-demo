@@ -23,7 +23,7 @@ export function DoorsParallax({ eyebrow, title, columns }: { eyebrow: string; ti
   return (
     <section ref={root} className="theme-blush relative overflow-hidden py-24 md:py-32">
       <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center">
-        <div data-doors-title className="text-center">
+        <div data-doors-title className="rounded-[3rem] bg-[radial-gradient(closest-side,var(--petal)_55%,transparent)] px-10 py-12 text-center md:px-24">
           <p className="t-eyebrow text-accent">{eyebrow}</p>
           <h2 className="mt-3 font-serif text-[clamp(3rem,9vw,9rem)] leading-[0.9] tracking-[-0.03em] text-ink [text-shadow:0_2px_40px_var(--petal)]">{title}</h2>
         </div>

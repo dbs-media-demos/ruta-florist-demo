@@ -42,13 +42,13 @@ export function OccasionsTrack({ eyebrow, title, items, cta }: { eyebrow: string
 
   return (
     <section ref={root} className="theme-linen relative overflow-hidden py-20 md:flex md:h-screen md:flex-col md:justify-center md:py-0">
-      <div className="wrap md:absolute md:left-0 md:right-0 md:top-[calc(var(--header-h)+var(--ribbon-h)+2rem)]">
+      <div className="wrap md:pt-[calc(var(--header-h)+var(--ribbon-h))]">
         <p className="t-eyebrow text-accent">{eyebrow}</p>
         <h2 className="t-h2 mt-3">{title}</h2>
       </div>
-      <ul ref={track} className="no-scrollbar mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--gutter)] md:mt-28 md:gap-6 md:overflow-visible md:pl-[34vw]" data-cursor="drag" data-cursor-label="→">
+      <ul ref={track} className="no-scrollbar mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--gutter)] md:mt-8 md:gap-6 md:overflow-visible md:pl-[30vw]" data-cursor="drag" data-cursor-label="→">
         {items.map((it, i) => (
-          <li key={it.id} className="w-[74vw] shrink-0 snap-center md:w-[30vw]" style={{ marginTop: i % 2 ? "3.5rem" : 0 }}>
+          <li key={it.id} className="w-[74vw] shrink-0 snap-center md:w-[min(24vw,calc((100svh-20rem)*0.75))]" style={{ marginTop: i % 2 ? "2.5rem" : 0 }}>
             <Link href={it.href} className="group block">
               <div className="frame relative aspect-[3/4] rounded-[1.75rem]">
                 <div data-occ-img className="absolute -inset-x-[10%] inset-y-0">

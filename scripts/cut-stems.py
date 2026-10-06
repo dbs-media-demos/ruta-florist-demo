@@ -16,7 +16,7 @@ OUT = os.path.join(HERE, "..", "public", "images", "builder")
 CUTS = {
     "sunflower": (6913745, (600, 650, 1650, 1980)),
     "rose-red": (6913742, (850, 950, 1650, 2100)),
-    "hydrangea": (6913761, (300, 650, 2000, 2300)),
+    "hydrangea": (6913761, (150, 380, 2250, 2300)),
     "carnation-pink": (6913164, (600, 1100, 1650, 3300)),
     "rose-white": (6913166, (0, 1700, 800, 3550)),
     "gypsophila": (6913166, (1650, 1400, 2400, 2500)),
@@ -40,7 +40,7 @@ def key(im):
     dist = np.linalg.norm(a - local_bg, axis=2)
     lum_drop = np.clip((local_bg.mean(axis=2) - a.mean(axis=2)), 0, None)
     d = np.maximum(dist, lum_drop * 1.4)
-    alpha = np.clip((d - 15) / 40, 0, 1)
+    alpha = np.clip((d - 24) / 34, 0, 1)
     # un-mix wall colour: c = a*fg + (1-a)*bg  ->  fg = (c - (1-a)bg)/a
     al = alpha[..., None]
     fg = np.where(al > 0.02, (a - (1 - al) * local_bg) / np.maximum(al, 0.02), 0)

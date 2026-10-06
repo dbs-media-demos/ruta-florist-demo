@@ -113,7 +113,7 @@ export function ScrubWords({ text, className, as: Tag = "p", accent = [] }: { te
       const el = ref.current;
       if (!el || prefersReducedMotion()) return;
       const words = el.querySelectorAll<HTMLElement>("[data-w]");
-      gsap.fromTo(words, { opacity: 0.22 }, { opacity: 1, ease: "none", stagger: 0.1, scrollTrigger: { trigger: el, start: "top 82%", end: "bottom 45%", scrub: 0.6 } });
+      gsap.fromTo(words, { opacity: 0.55 }, { opacity: 1, ease: "none", stagger: 0.1, scrollTrigger: { trigger: el, start: "top 82%", end: "bottom 45%", scrub: 0.6 } });
     },
     { scope: ref },
   );
