@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ruta · cvetni atelje (Scale by Noon demo)
 
-## Getting Started
+A fictional flower studio in Dorćol, Belgrade, with same-day delivery across the city. Serbian (Latin) at `/`, English at `/en`. It's an e-commerce concept site built by Scale by Noon; it charges nothing and sends nothing.
 
-First, run the development server:
+- Live: https://ruta-florist-demo.vercel.app
+- Stack: Next.js 16 (App Router, Turbopack), React 19.2, Tailwind CSS v4, GSAP 3 (ScrollTrigger, SplitText, Flip), Lenis.
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev -- -p 4251
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`NEXT_PUBLIC_NOINDEX=false` makes the site indexable (it is `noindex` by default).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Store architecture (how to make it real)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All shop data and money logic sit behind two small interfaces in `src/lib/commerce/provider.ts`:
 
-## Learn More
+| Interface | Demo implementation | What a real client swaps in |
+|---|---|---|
+| `CatalogProvider` (server, build time) | `mock-catalog.ts` reads `src/content/products.ts` | Shopify Storefront API, a headless CMS, or an ERP/POS export |
+| `CheckoutProvider` (client) | `mock-checkout.ts` handles totals, promo, delivery zones and a simulated order | Shopify cart/checkout, Stripe Checkout, or a Serbian bank card gateway (e.g. NestPay / Banca Intesa / Raiffeisen with Visa, Mastercard and DinaCard), an IPS QR generator from the bank, and cash on delivery through the courier |
 
-To learn more about Next.js, take a look at the following resources:
+The UI only imports these interfaces. The bag, wishlist and recently viewed items are small `useSyncExternalStore` stores in `src/lib/commerce/store.ts`, persisted in `localStorage` with every access wrapped in try/catch. Bag lines carry a snapshot of the product, so the cart and checkout never ship the catalogue to the browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Card details live only inside `src/components/checkout/CardForm.tsx`: no network requests, no storage, no logging. The form is remounted after payment to wipe them.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Content and assets
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Catalogue: `src/content/products.ts` (36 products, sizes and palettes, per-variant price and stock, reviews).
+- Categories, collections and occasions: `src/content/taxonomy.ts`. Delivery zones and the SVG map shapes: `src/content/zones.ts`.
+- Photos: `scripts/fetch-images.py` downloads and grades them (credits are in `public/images/SOURCES.md`). Bouquet-builder cut-outs come from `scripts/cut-stems.py`. The hero bloom is a 48-frame WebP sequence in `public/bloom/`.
