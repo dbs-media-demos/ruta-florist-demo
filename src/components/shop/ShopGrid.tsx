@@ -55,6 +55,7 @@ const minPrice = (p: ProductLite) => Math.min(...p.variants.map((v) => v.price))
 export function ShopGridStatic({ items, locale }: { items: ProductLite[]; locale: Locale }) {
   return (
     <div className="wrap">
+      <h2 className="sr-only">{locale === "sr" ? "Proizvodi" : "Products"}</h2>
       <ul className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
         {items.map((p, i) => (
           <li key={p.id}>
@@ -313,6 +314,7 @@ export function ShopGrid({
           )}
         </div>
 
+        <h2 className="sr-only">{d.shop.results(count)}</h2>
         <ul ref={grid} className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
           {items.map((p, i) => (
             <li key={p.id} data-flip data-flip-id={p.id} className={clsx(!visible.has(p.id) && "hidden")} style={{ order: order.get(p.id) }}>
