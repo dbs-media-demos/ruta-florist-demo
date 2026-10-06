@@ -27,7 +27,7 @@ function QuickBody({ p, locale }: { p: ProductLite; locale: Locale }) {
   const photo = useRef<HTMLDivElement>(null);
   return (
         <div className="grid max-h-[92vh] overflow-y-auto md:max-h-[88vh] md:grid-cols-[1fr_1.1fr]">
-          <div ref={photo} className="frame relative aspect-[4/5] md:aspect-auto md:min-h-full">
+          <div ref={photo} className="frame relative h-[min(110vw,58vh)] md:h-auto md:min-h-full">
             {p.images.map((src, i) => (
               <Image
                 key={src}

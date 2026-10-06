@@ -45,7 +45,7 @@ export function Success({ locale, shopHref, trackHref }: { locale: Locale; shopH
       .from(q("[data-flap-r]"), { xPercent: 120, rotate: 40, transformOrigin: "0% 100%", duration: 0.9, ease: "expo.out" }, "<0.1")
       .fromTo(q("[data-ribbon]"), { strokeDashoffset: 120 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" })
       .from(q("[data-bow]"), { scale: 0, transformOrigin: "50% 50%", duration: 0.6, ease: "back.out(3)" }, "-=0.2")
-      .to(q("[data-bouquet]"), { scale: 0.38, y: 120, x: -40, duration: 0.9, ease: "power3.inOut" }, "+=0.4")
+      .to(q("[data-bouquet]"), { scale: 0.36, x: () => (q("[data-bouquet]")[0] as HTMLElement).offsetWidth * 0.19, y: () => -(q("[data-bouquet]")[0] as HTMLElement).offsetWidth * 0.05, duration: 0.9, ease: "power3.inOut" }, "+=0.4")
       .fromTo(q("[data-bike]"), { xPercent: -160, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "<0.2")
       .to(q("[data-ride]"), { x: () => el.offsetWidth * 0.95, duration: 2.4, ease: "power1.in" }, "+=0.5")
       .fromTo(q("[data-eta]"), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, "-=1.6");

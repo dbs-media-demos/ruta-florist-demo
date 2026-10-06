@@ -114,7 +114,18 @@ export function ShopGrid({
     return () => io.disconnect();
   }, []);
 
+  const reveals = useRef<gsap.core.Tween[]>([]);
+
   const update = (next: Partial<Filters>) => {
+    // the first-load wipe reveals no longer apply once cards start moving
+    if (reveals.current.length && grid.current) {
+      reveals.current.forEach((t) => {
+        t.scrollTrigger?.kill();
+        t.kill();
+      });
+      reveals.current = [];
+      gsap.set(grid.current.querySelectorAll("[data-flip]"), { clearProps: "clipPath,transform" });
+    }
     const F = FlipRef.current;
     if (F && grid.current) flipState.current = F.getState(grid.current.querySelectorAll("[data-flip]"));
     const merged = { ...f, ...next };
@@ -168,10 +179,10 @@ export function ShopGrid({
     if (!animate || prefersReducedMotion() || !grid.current) return;
     const cards = Array.from(grid.current.querySelectorAll<HTMLElement>("[data-flip]")).filter((c) => c.getBoundingClientRect().top > window.innerHeight * 0.9);
     gsap.set(cards, { clipPath: "inset(100% 0% 0% 0%)", y: 50 });
-    const st = cards.map((c) =>
+    reveals.current = cards.map((c) =>
       gsap.to(c, { clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 1.2, ease: "expo.out", clearProps: "clipPath,transform", scrollTrigger: { trigger: c, start: "top 92%", once: true } }),
     );
-    return () => st.forEach((t) => t.scrollTrigger?.kill());
+    return () => reveals.current.forEach((t) => t.scrollTrigger?.kill());
   }, [animate]);
 
   const count = visible.size;

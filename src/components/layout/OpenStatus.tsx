@@ -28,8 +28,9 @@ export function OpenStatus({ locale, className }: { locale: Locale; className?: 
         const h = hours.find((x) => x.day === day);
         if (!h) continue;
         if (i === 0 && mins >= toMin(h.open)) continue;
-        const dayName = i === 0 ? "" : i === 1 ? (locale === "sr" ? "sutra " : "tomorrow ") : `${d.footer.days[day]} `;
-        setLabel({ open: false, text: `${d.open.closed} · ${d.open.opens} ${dayName}${h.open}` });
+        const when = i === 0 ? "" : i === 1 ? (locale === "sr" ? "sutra " : "tomorrow ") : `${d.footer.days[day]} `;
+        const text = locale === "sr" ? `${d.open.closed} · otvara ${when}u ${h.open}` : `${d.open.closed} · opens ${when}at ${h.open}`;
+        setLabel({ open: false, text });
         return;
       }
     };

@@ -167,6 +167,10 @@
   button {
     cursor: pointer;
   }
+  /* grid tracks must not grow to fit horizontal scroll rows inside them */
+  .grid > * {
+    min-width: 0;
+  }
   input,
   textarea,
   select {

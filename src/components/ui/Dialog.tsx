@@ -80,7 +80,8 @@ export function Dialog({
         inert={!open}
         data-lenis-prevent
         className={clsx(
-          "theme-paper absolute flex flex-col shadow-[0_30px_80px_rgba(15,27,21,0.3)] transition-[transform,opacity] duration-700 ease-[var(--ease-out-expo)]",
+          "theme-paper absolute flex flex-col transition-[transform,opacity,visibility] duration-700 ease-[var(--ease-out-expo)]",
+          open ? "visible shadow-[0_30px_80px_rgba(15,27,21,0.3)]" : "invisible",
           variant === "drawer" && ["inset-y-0 right-0 w-full max-w-[30rem]", open ? "translate-x-0" : "translate-x-full"],
           variant === "modal" && [
             "inset-x-0 bottom-0 max-h-[92vh] rounded-t-[1.75rem] md:inset-auto md:left-1/2 md:top-1/2 md:max-h-[88vh] md:w-[min(64rem,92vw)] md:rounded-[1.75rem]",

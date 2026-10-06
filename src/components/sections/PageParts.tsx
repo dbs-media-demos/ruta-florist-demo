@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
@@ -79,7 +79,8 @@ export function PageHero({
                 <span className="sr-only">{title}</span>
                 <span aria-hidden>
                   {title.split(" ").map((w, wi, arr) => (
-                    <span key={wi} className="inline-block whitespace-nowrap">
+                    <Fragment key={wi}>
+                    <span className="inline-block whitespace-nowrap">
                       {Array.from(w).map((ch, ci) => (
                         <span key={ci} className="line-mask inline-block align-bottom">
                           <span className="anim-heading inline-block" style={{ ["--d" as string]: `${0.02 * (wi * 4 + ci)}s` }}>
@@ -87,8 +88,9 @@ export function PageHero({
                           </span>
                         </span>
                       ))}
-                      {wi < arr.length - 1 && " "}
                     </span>
+                    {wi < arr.length - 1 && " "}
+                    </Fragment>
                   ))}
                 </span>
                 </>
