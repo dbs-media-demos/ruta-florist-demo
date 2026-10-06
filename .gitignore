@@ -43,3 +43,6 @@ next-env.d.ts
 # local working files
 /.stems/
 /scripts/__pycache__/
+
+.vercel
+.env*
