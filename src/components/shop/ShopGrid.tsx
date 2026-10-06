@@ -57,7 +57,7 @@ export function ShopGridStatic({ items, locale }: { items: ProductLite[]; locale
     <div className="wrap">
       <h2 className="sr-only">{locale === "sr" ? "Proizvodi" : "Products"}</h2>
       <ul className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
-        {items.map((p, i) => (
+        {items.slice(0, 12).map((p, i) => (
           <li key={p.id}>
             <ProductCard product={p} locale={locale} priority={i < 2} />
           </li>
