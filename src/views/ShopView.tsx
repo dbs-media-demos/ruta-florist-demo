@@ -91,11 +91,11 @@ export function ShopView({ locale, mode }: { locale: Locale; mode: Mode }) {
           <div className="wrap">
             <ul className="no-scrollbar -mx-[var(--gutter)] flex snap-x gap-4 overflow-x-auto px-[var(--gutter)] pb-2" data-cursor="drag" data-cursor-label={d.shop.drag} aria-label={d.shop.category}>
               {cats.map((c, i) => (
-                <li key={c.id} className="w-[42vw] shrink-0 snap-start sm:w-[28vw] md:w-[17vw]">
+                <li key={c.id} className="w-[30vw] shrink-0 snap-start sm:w-[24vw] md:w-[17vw]">
                   <Link href={c.href} className="group block">
                     <div className="frame relative aspect-[3/4] rounded-[1.25rem]">
-                      <Image src={c.image} alt="" fill preload={i < 2} sizes="(min-width: 768px) 17vw, 42vw" className="object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-110" />
-                      <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent p-4 pt-10 font-serif text-xl text-paper">{c.name}</span>
+                      <Image src={c.image} alt="" fill preload={i < 2} sizes="(min-width: 768px) 17vw, 30vw" className="object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-110" />
+                      <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent p-3 pt-10 font-serif text-base text-paper md:p-4 md:text-xl">{c.name}</span>
                     </div>
                   </Link>
                 </li>

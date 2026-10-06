@@ -143,7 +143,10 @@ export function BloomHero({ locale, copy, shopHref, buildHref }: { locale: Local
           <div data-flower className="absolute inset-0 will-change-transform [mask-image:linear-gradient(to_bottom,#000_72%,transparent_98%)]" style={{ transformOrigin: "49% 44%" }}>
             <div className="anim-unfold absolute inset-0" style={{ ["--d" as string]: "0.15s" }}>
               {/* eslint-disable-next-line @next/next/no-img-element -- frame 1 of the sequence, swapped for the canvas */}
-              <img ref={poster} src={src("m", 0)} alt="" aria-hidden className="absolute inset-0 h-full w-full transition-opacity duration-300" fetchPriority="low" />
+              <picture>
+                <source media="(min-width: 768px)" srcSet={src("d", 0)} />
+                <img ref={poster} src={src("m", 0)} alt="" aria-hidden className="absolute inset-0 h-full w-full transition-opacity duration-300" fetchPriority="low" />
+              </picture>
               <canvas ref={canvas} aria-hidden className="absolute inset-0 h-full w-full" />
               <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,transparent_60%,#000_100%)]" />
             </div>
