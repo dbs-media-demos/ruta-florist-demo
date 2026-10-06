@@ -153,7 +153,7 @@ export function BloomHero({ locale, copy, shopHref, buildHref }: { locale: Local
           </div>
         </div>
 
-        <div className="wrap relative flex h-full flex-col justify-between pb-8 pt-[calc(var(--header-h)+var(--ribbon-h)+1.5rem)] md:pb-10">
+        <div className="wrap relative flex h-full flex-col justify-between pb-[8.75rem] pt-[calc(var(--header-h)+var(--ribbon-h)+1.5rem)] md:pb-10">
           <div data-fade className="flex items-start justify-between gap-6">
             <p className="t-eyebrow anim-fade text-paper/75">{copy.eyebrow}</p>
             <p className="anim-fade hidden max-w-[16rem] text-right text-sm text-paper/70 md:block" style={{ ["--d" as string]: "0.3s" }}>
