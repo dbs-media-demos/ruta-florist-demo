@@ -84,7 +84,7 @@ export function ShopView({ locale, mode }: { locale: Locale; mode: Mode }) {
   return (
     <>
       <JsonLd data={graph(itemListSchema(title, products.map((p) => ({ name: p.name[locale], url: detailHref(locale, "product", p.slug), image: p.images[0] }))))} />
-      <PageHero locale={locale} crumbs={crumbs} eyebrow={eyebrow} title={title} intro={intro} image={image} tone={calm ? "calm" : "paper"} />
+      <PageHero locale={locale} crumbs={crumbs} eyebrow={eyebrow} title={title} intro={intro} image={image} tone={calm ? "calm" : "paper"} imageOnPhones={false} />
 
       {mode.kind === "all" && (
         <section className="theme-paper pb-12">

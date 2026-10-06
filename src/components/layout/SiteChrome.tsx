@@ -46,7 +46,7 @@ export function SiteChrome({ locale, children }: { locale: Locale; children: Rea
     image: p.images[0],
     price: minPrice(p),
     compareAt: p.variants[0].compareAt,
-    terms: [cats.find((c) => c.id === p.category)?.name.sr, cats.find((c) => c.id === p.category)?.name.en, p.palette, ...p.occasions, p.short.sr, p.short.en].join(" "),
+    terms: [cats.find((c) => c.id === p.category)?.name.sr, cats.find((c) => c.id === p.category)?.name.en, p.palette, ...p.occasions, p.materials.en.split(",")[0]].join(" "),
   }));
   const crossSells = products.filter((p) => p.category === "addons").map(catalog.toLite);
 

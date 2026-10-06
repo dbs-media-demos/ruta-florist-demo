@@ -52,6 +52,7 @@ export function PageHero({
   imageAlt = "",
   children,
   tone = "paper",
+  imageOnPhones = true,
 }: {
   locale: Locale;
   crumbs: Crumb[];
@@ -62,6 +63,8 @@ export function PageHero({
   imageAlt?: string;
   children?: ReactNode;
   tone?: "paper" | "linen" | "calm" | "ink";
+  /** shop pages skip the photo on phones so the title is the first paint */
+  imageOnPhones?: boolean;
 }) {
   const calm = tone === "calm";
   return (
@@ -104,8 +107,8 @@ export function PageHero({
             {children}
           </div>
           {image && (
-            <div className={clsx("frame relative aspect-[4/3] rounded-[1.75rem] md:aspect-[5/4] md:max-h-[62vh]", !calm && "anim-unfold")}>
-              <Image src={image} alt={imageAlt} fill preload sizes="(min-width: 768px) 40vw, 100vw" className="object-cover" />
+            <div className={clsx("frame relative aspect-[4/3] rounded-[1.75rem] md:aspect-[5/4] md:max-h-[62vh]", !calm && "anim-unfold", !imageOnPhones && "hidden md:block")}>
+              <Image src={image} alt={imageAlt} fill preload={imageOnPhones} sizes="(min-width: 768px) 40vw, 100vw" className="object-cover" />
             </div>
           )}
         </div>
