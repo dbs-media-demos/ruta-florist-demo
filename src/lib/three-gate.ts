@@ -7,8 +7,26 @@
  */
 export const DESKTOP_3D_QUERY = "(min-width: 1024px) and (hover: hover) and (pointer: fine)";
 
+/** sessionStorage flag: a scene ran too slowly on this machine, so every scene stays a still for the rest of the visit. */
+const SLOW_KEY = "scale:3d-off";
+
+export function mark3DSlow() {
+  try {
+    sessionStorage.setItem(SLOW_KEY, "1");
+  } catch {}
+}
+
+function was3DSlow() {
+  try {
+    return sessionStorage.getItem(SLOW_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function can3D() {
   if (typeof window === "undefined") return false;
+  if (was3DSlow()) return false;
   if (!window.matchMedia(DESKTOP_3D_QUERY).matches) return false;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
   const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;

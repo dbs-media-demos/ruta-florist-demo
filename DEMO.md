@@ -38,6 +38,7 @@
     - card (Visa, Mastercard, DinaCard detection, Luhn check, flipping card preview), cash on delivery (only when the buyer is the recipient) and an IPS QR placeholder.
   - Success: the bouquet is wrapped and tied with a ribbon, then a bike rides off with the delivery time.
 - Phone budget (production build, 375 px, 4× CPU, slow 4G; 9 Nov 2026): home LCP 1.4–1.5 s, CLS 0.005, TBT 100–120 ms, JS 268 KB compressed (GSAP is shared by the desktop scenes; the target is 200 KB), 593 KB in total, 0 bytes of three.js, two font files (47 KB).
+- Smooth 3D (production build, desktop 1440 px, headless Chrome on the RTX 5070; 9 Nov 2026): the rose appears 0.9 s after three.js starts loading (1.5 s after navigation), with no main-thread task over 50 ms while it warms up, 240 fps in its first 2 s and an 8 ms worst frame scrolling. 4× CPU: appears in 0.5 s, holds 130-135 fps, stays live (smooth, so no fallback); scrolling at 4× is the same with the 3D refused (`NO3D=1`), so the remaining 50-100 ms tasks are the page's own sections mounting, not the rose. 10× CPU: drops to 16 fps, fades back to the still, and the next page stays a still with zero three.js requests. Software WebGL keeps the still.
 - Lighthouse (live, mobile, before the 3D pass): home P 85–90 / A 100 / BP 100 / SEO 69. Product 88–90, category 94, shop index 81–86. Desktop P 98–99. SEO is 69 only because of the intended noindex; it's 100 with `NEXT_PUBLIC_NOINDEX=false` (verified on home, shop, product and FAQ).
 
 ## Demo store details

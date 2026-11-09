@@ -7,7 +7,7 @@ import type { Locale } from "@/lib/i18n";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { CutoffLine } from "@/components/layout/Countdown";
 import { Stars } from "@/components/sections/ReviewsWall";
-import { after3DGate, stillMode, DESKTOP_3D_QUERY } from "@/lib/three-gate";
+import { after3DGate, mark3DSlow, stillMode, DESKTOP_3D_QUERY } from "@/lib/three-gate";
 import { ROSE_REST } from "@/components/fx/rose-frame";
 import type { RoseHandle } from "@/components/fx/RoseScene";
 
@@ -27,7 +27,8 @@ const STILL = { phone: "/hero/rose-phone.webp", desktop: "/hero/rose-desktop.web
  * - Server HTML: the heading, the buttons, the rating, the phone number and a still of the rose
  *   rendered from the 3D scene. Nothing here fades in.
  * - Desktop (big screen + mouse, motion allowed, no Save-Data): after load, three.js is imported
- *   inside the gate and the live rose fades in over the still. Scrolling opens it petal by petal,
+ *   inside the gate, warmed up unseen, and the live rose fades in over the still once it is ready
+ *   (too slow in its first 2 s, it fades back to the still for the visit). Scrolling opens it petal by petal,
  *   it turns to face the visitor, then the camera dives into its heart and the page opens onto paper.
  * - Phones and tablets: the still, the same words, no pin, zero bytes of three.js.
  */
@@ -87,32 +88,57 @@ export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneD
     const onMove = (e: PointerEvent) => rose.current?.setPointer((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1);
     const io = new IntersectionObserver(([en]) => rose.current?.setVisible(en.isIntersecting));
 
+    let fade = 0;
+    // too slow on this machine: back to the still for the rest of the visit, then free the GPU
+    const onSlow = () => {
+      mark3DSlow();
+      window.removeEventListener("pointermove", onMove);
+      io.disconnect();
+      setLive(false);
+      fade = window.setTimeout(() => {
+        rose.current?.dispose();
+        rose.current = null;
+      }, 1600);
+    };
+
     const start = async () => {
       const cv = canvas.current;
       if (dead || rose.current || !cv || !section) return;
+      performance.mark("rose:import");
       const { createRoseScene } = await import("@/components/fx/RoseScene");
       if (dead || !canvas.current) return;
+      let handle: RoseHandle;
       try {
-        rose.current = createRoseScene(canvas.current, { still: still ?? undefined });
+        // resolves once the shaders are compiled and a frame has been drawn unseen: the still holds until then
+        handle = await createRoseScene(canvas.current, { still: still ?? undefined, onSlow });
       } catch (err) {
         if (still) console.error(err);
-        return; // no WebGL after all: the still stays
+        performance.mark("rose:no-gpu");
+        return; // no WebGL, or no real graphics chip: the still stays
       }
+      if (dead) return handle.dispose();
+      rose.current = handle;
       if (still) {
         canvas.current.style.opacity = "1";
         window.__roseStill = () => rose.current!.snapshot();
         return;
       }
-      rose.current.setProgress(progress.current, true);
+      performance.mark("rose:ready");
+      handle.setProgress(progress.current, true);
       window.addEventListener("pointermove", onMove, { passive: true });
       io.observe(section);
-      requestAnimationFrame(() => !dead && setLive(true));
+      requestAnimationFrame(() => {
+        if (dead) return;
+        handle.start();
+        setLive(true);
+      });
     };
 
     const cancel = still ? (void start(), () => {}) : after3DGate(() => void start());
     return () => {
       dead = true;
       cancel();
+      window.clearTimeout(fade);
       window.removeEventListener("pointermove", onMove);
       io.disconnect();
       rose.current?.dispose();
