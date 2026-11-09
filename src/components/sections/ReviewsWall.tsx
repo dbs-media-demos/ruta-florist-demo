@@ -37,7 +37,7 @@ export function ReviewCard({ r, locale }: { r: (typeof storeReviews)[number]; lo
   );
 }
 
-/** Scene 9: Google-style rating plus two rows of reviews drifting in opposite directions. */
+/** Google-style rating plus two rows of reviews drifting in opposite directions (desktop); on phones each row is a swipeable strip. */
 export function ReviewsWall({ locale, eyebrow, title }: { locale: Locale; eyebrow: string; title: string }) {
   const rows = [storeReviews.slice(0, 6), storeReviews.slice(6)];
   return (
@@ -46,6 +46,7 @@ export function ReviewsWall({ locale, eyebrow, title }: { locale: Locale; eyebro
         <div>
           <p className="t-eyebrow text-accent">{eyebrow}</p>
           <h2 className="t-h2 mt-4 max-w-2xl">{title}</h2>
+          <p className="mt-4 text-sm text-muted">{locale === "sr" ? "Primeri utisaka za ovaj koncept sajt." : "Sample reviews for this concept site."}</p>
         </div>
         <div className="flex items-center gap-5 rounded-[1.5rem] border border-line bg-surface p-5">
           <svg width="34" height="34" viewBox="0 0 48 48" aria-hidden>
@@ -68,7 +69,7 @@ export function ReviewsWall({ locale, eyebrow, title }: { locale: Locale; eyebro
           <div key={i} className="marquee-wrap overflow-hidden">
             <ul className="marquee gap-5 pl-5" style={{ ["--marquee-d" as string]: `${55 + i * 12}s`, animationDirection: i ? "reverse" : "normal" }}>
               {[...row, ...row].map((r, k) => (
-                <li key={`${r.id}-${k}`} aria-hidden={k >= row.length} className="h-auto">
+                <li key={`${r.id}-${k}`} aria-hidden={k >= row.length} className="h-auto max-md:snap-start">
                   <ReviewCard r={r} locale={locale} />
                 </li>
               ))}

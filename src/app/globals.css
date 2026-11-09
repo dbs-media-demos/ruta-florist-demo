@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Desktop scroll scenes: a big screen with a mouse, motion allowed (the 3D gate asks the same). */
+@custom-variant desk (@media (min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference));
+
 /* ────────────────────────────────────────────────────────────────
    Ruta: design tokens
    Paper and linen, a deep garden green as ink, one living accent
@@ -33,6 +36,10 @@
 }
 
 @layer base {
+  /* fieldsets default to min-width: min-content, which lets a scrolling chip row inside widen the page */
+  fieldset {
+    min-width: 0;
+  }
   .theme-paper {
     --bg: var(--paper);
     --fg: var(--ink);
@@ -420,6 +427,34 @@
     display: none;
   }
 
+  /* sections below the first screens (components/ui/Later): skipped until near, at their real height */
+  /* phones only: tablets pin the occasions track, and containment would break the pin */
+  @media (max-width: 767px) {
+    [data-cv] {
+      content-visibility: auto;
+      contain-intrinsic-size: auto var(--cv);
+    }
+  }
+  @media (max-width: 359px) {
+    [data-cv] {
+      contain-intrinsic-size: auto var(--cv-s);
+    }
+  }
+  @media (min-width: 431px) and (max-width: 767px) {
+    [data-cv] {
+      contain-intrinsic-size: auto var(--cv-l);
+    }
+  }
+
+  /* phones: one small fade-and-rise per section heading (components/ui/Reveal) */
+  [data-rise="pre"] {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  [data-rise="in"] {
+    animation: rise-phone 0.3s ease-out both;
+  }
+
   /* marquee */
   .marquee {
     display: flex;
@@ -428,6 +463,26 @@
   }
   .marquee-wrap:hover .marquee {
     animation-play-state: paused;
+  }
+  /* phones: nothing auto-advances; the row is a swipeable strip with the next card showing */
+  @media (max-width: 767px) {
+    .marquee-wrap {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 1.25rem;
+      scrollbar-width: none;
+      overscroll-behavior-x: contain;
+    }
+    .marquee-wrap::-webkit-scrollbar {
+      display: none;
+    }
+    .marquee {
+      animation: none;
+      padding-right: 1.25rem;
+    }
+    .marquee > [aria-hidden="true"] {
+      display: none;
+    }
   }
 
   /* gentle sway for stems and petals */
@@ -462,6 +517,12 @@
   }
   to {
     transform: none;
+  }
+}
+@keyframes rise-phone {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
   }
 }
 @keyframes marquee {

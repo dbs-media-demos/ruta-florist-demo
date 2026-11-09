@@ -5,7 +5,7 @@ import clsx from "clsx";
 import type { Locale } from "@/lib/i18n";
 import { zones, rivers, studioPin, type Zone } from "@/content/zones";
 import { formatRsd } from "@/lib/format";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, deskMotion } from "@/lib/gsap";
 
 /**
  * Stylised map of Belgrade's delivery zones (not to scale). Hover, focus or tap a zone to see
@@ -19,7 +19,7 @@ export function ZoneMap({ locale, value, onSelect, className }: { locale: Locale
 
   useGSAP(
     () => {
-      if (prefersReducedMotion() || !root.current) return;
+      if (!deskMotion() || !root.current) return; // phones: the map, drawn
       const q = gsap.utils.selector(root);
       const paths = q("[data-zone-path]") as unknown as SVGPathElement[];
       (q("[data-river]") as unknown as SVGPathElement[]).forEach((r) => {

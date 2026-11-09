@@ -3,18 +3,18 @@
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, deskMotion } from "@/lib/gsap";
 import { formatRsd } from "@/lib/format";
 
 type Plan = { id: string; name: string; every: string; price: number; saving: number; note: string; image: string };
 
-/** Scene 8: subscription plans as cards that stack on top of each other as you scroll. */
+/** Scene 8: subscription plans as cards that stack on top of each other as you scroll (desktop; a plain stack on phones). */
 export function SubsStack({ eyebrow, title, plans, perDelivery, save, cta, href }: { eyebrow: string; title: string; plans: Plan[]; perDelivery: string; save: string; cta: string; href: string }) {
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
-      if (prefersReducedMotion() || !root.current) return;
+      if (!deskMotion() || !root.current) return; // phones: a plain stack, the real numbers
       const cards = gsap.utils.toArray<HTMLElement>("[data-sub-card]", root.current);
       cards.forEach((card, i) => {
         if (i === cards.length - 1) return;
@@ -46,7 +46,7 @@ export function SubsStack({ eyebrow, title, plans, perDelivery, save, cta, href 
             <article
               key={p.id}
               data-sub-card
-              className="sticky grid origin-top overflow-hidden rounded-[2rem] bg-surface md:grid-cols-[1.1fr_1fr]"
+              className="grid origin-top overflow-hidden rounded-[2rem] bg-surface md:grid-cols-[1.1fr_1fr] desk:sticky"
               style={{ top: `calc(var(--header-h) + var(--ribbon-h) + ${1.5 + i * 1.25}rem)` }}
             >
               <div className="flex flex-col justify-between gap-10 p-8 md:p-12">

@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, deskMotion } from "@/lib/gsap";
 import { formatRsd } from "@/lib/format";
 import { BouquetStage, type StagedStem } from "@/components/builder/BouquetStage";
 
@@ -26,7 +26,7 @@ export function BuilderAssembly({ eyebrow, title, text, cta, href }: { eyebrow: 
   useGSAP(
     () => {
       const sec = root.current;
-      if (!sec || prefersReducedMotion()) return;
+      if (!sec || !deskMotion()) return; // phones: the finished bouquet
       const q = gsap.utils.selector(sec);
       const items = q("[data-stem]") as HTMLElement[];
       const tl = gsap.timeline({ scrollTrigger: { trigger: q("[data-stage]")[0], start: "top 80%", end: "bottom 45%", scrub: 0.8 } });

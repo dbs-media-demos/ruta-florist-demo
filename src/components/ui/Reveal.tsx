@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, type CSSProperties, type ElementType, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ElementType, type ReactNode, type RefObject } from "react";
 import clsx from "clsx";
-import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, loadSplitText } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, loadSplitText, deskMotion } from "@/lib/gsap";
 
 /*
  * Scroll-driven reveals. Content is visible in the HTML. `immediate` variants (top of the page)
@@ -11,6 +11,35 @@ import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, loadSplitText } fro
  */
 
 const belowFold = (el: Element) => el.getBoundingClientRect().top > window.innerHeight * 0.92;
+
+/**
+ * Phones and tablets: one small CSS fade-and-rise (0.3 s, once) when the heading comes into view,
+ * no GSAP, no SplitText and no layout reads. It is only hidden once the observer has said it is
+ * below the screen, so nothing ever flashes. Reduced motion: nothing.
+ */
+function usePhoneRise(ref: RefObject<HTMLElement | null>, on: boolean) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!on || !el || deskMotion() || prefersReducedMotion()) return;
+    let first = true;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (first) {
+          first = false;
+          if (e.isIntersecting) return io.disconnect();
+          el.dataset.rise = "pre";
+          return;
+        }
+        if (!e.isIntersecting) return;
+        el.dataset.rise = "in";
+        io.disconnect();
+      },
+      { rootMargin: "0px 0px -6% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, on]);
+}
 const delayStyle = (d: number) => ({ "--d": `${d}s` }) as CSSProperties;
 
 type SplitProps = { children: ReactNode; as?: ElementType; className?: string; delay?: number; immediate?: boolean; stagger?: number; id?: string; chars?: boolean };
@@ -18,11 +47,12 @@ type SplitProps = { children: ReactNode; as?: ElementType; className?: string; d
 /** Headline that rises line by line out of a mask (or letter by letter with `chars`). */
 export function SplitReveal({ children, as: Tag = "h2", className, delay = 0, immediate, stagger = 0.09, id, chars }: SplitProps) {
   const ref = useRef<HTMLElement>(null);
+  usePhoneRise(ref, !immediate);
 
   useGSAP(
     () => {
       const el = ref.current;
-      if (!el || immediate || prefersReducedMotion() || !belowFold(el)) return;
+      if (!el || immediate || !deskMotion() || !belowFold(el)) return;
       gsap.set(el, { opacity: 0 });
       let split: { revert: () => void } | null = null;
       let cancelled = false;
@@ -73,7 +103,7 @@ export function Reveal({ children, as: Tag = "div", className, delay = 0, y = 36
   useGSAP(
     () => {
       const el = ref.current;
-      if (!el || immediate || prefersReducedMotion() || !belowFold(el)) return;
+      if (!el || immediate || !deskMotion() || !belowFold(el)) return; // phones: already there
       const targets = stagger ? Array.from(el.children) : [el];
       if (wipe) {
         gsap.set(targets, { clipPath: "inset(100% 0% 0% 0% round 1.25rem)", y: 40 });
@@ -111,7 +141,7 @@ export function ScrubWords({ text, className, as: Tag = "p", accent = [] }: { te
   useGSAP(
     () => {
       const el = ref.current;
-      if (!el || prefersReducedMotion()) return;
+      if (!el || !deskMotion()) return;
       const words = el.querySelectorAll<HTMLElement>("[data-w]:not(.text-accent)");
       gsap.fromTo(words, { opacity: 0.55 }, { opacity: 1, ease: "none", stagger: 0.1, scrollTrigger: { trigger: el, start: "top 82%", end: "bottom 45%", scrub: 0.6 } });
     },
@@ -136,7 +166,7 @@ export function Parallax({ children, className, amount = 12, style }: { children
     () => {
       const el = ref.current;
       const layer = el?.firstElementChild;
-      if (!el || !layer || prefersReducedMotion()) return;
+      if (!el || !layer || !deskMotion()) return; // no parallax on phones
       gsap.fromTo(layer, { yPercent: -amount / 2, scale: 1 + amount / 100 }, { yPercent: amount / 2, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
     },
     { scope: ref },

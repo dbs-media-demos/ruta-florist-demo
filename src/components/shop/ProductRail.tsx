@@ -5,7 +5,7 @@ import clsx from "clsx";
 import type { Locale } from "@/lib/i18n";
 import type { ProductLite } from "@/lib/commerce/types";
 import { getDictionary } from "@/i18n/dictionary";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, deskMotion, prefersReducedMotion } from "@/lib/gsap";
 import { ProductCard } from "./ProductCard";
 
 /**
@@ -70,7 +70,7 @@ export function ProductRail({ items, locale, label, parallax, className }: { ite
   useGSAP(
     () => {
       const el = track.current;
-      if (!el || prefersReducedMotion()) return;
+      if (!el || !deskMotion()) return; // phones: a plain swipeable rail
       const cards = Array.from(el.children);
       if (el.getBoundingClientRect().top > window.innerHeight * 0.9) {
         gsap.set(cards, { opacity: 0, y: 70, rotate: 2 });

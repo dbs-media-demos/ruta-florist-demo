@@ -2,16 +2,16 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, deskMotion } from "@/lib/gsap";
 
 type Photo = { src: string; caption: string };
 
-/** Scene 10: three columns of Belgrade doorsteps and interiors drifting at different speeds. */
+/** Scene 10: three columns of Belgrade doorsteps and interiors drifting at different speeds (desktop; still on phones). */
 export function DoorsParallax({ eyebrow, title, columns }: { eyebrow: string; title: string; columns: Photo[][] }) {
   const root = useRef<HTMLElement>(null);
   useGSAP(
     () => {
-      if (prefersReducedMotion() || !root.current) return;
+      if (!deskMotion() || !root.current) return; // no parallax on phones
       const cols = gsap.utils.toArray<HTMLElement>("[data-col]", root.current);
       const speeds = [-120, 80, -60];
       cols.forEach((c, i) => gsap.fromTo(c, { y: -speeds[i] / 2 }, { y: speeds[i], ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: true } }));

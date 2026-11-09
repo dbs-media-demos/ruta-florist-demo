@@ -47,7 +47,7 @@ export function Header(p: Props) {
   const isHome = pathname === p.homeHref;
   const count = bagCount(bag);
 
-  // Dark sections under the header ([data-header-dark]) flip it to light-on-transparent.
+  // Dark sections under the header ([data-header-dark]) flip it to light-on-ink. Opaque either way: nothing shows through.
   useEffect(() => {
     const update = () => {
       setScrolled(window.scrollY > 24);
@@ -118,7 +118,7 @@ export function Header(p: Props) {
         <div
           className={clsx(
             "relative h-[var(--header-h)] transition-[background-color,color,box-shadow] duration-500",
-            light ? "bg-transparent text-paper" : "bg-paper/88 text-ink backdrop-blur-xl",
+            light ? "bg-ink text-paper" : "bg-paper text-ink",
             !light && scrolled && "shadow-[0_1px_0_var(--line)]",
           )}
           style={{ ["--line" as string]: "color-mix(in oklab, var(--ink) 12%, transparent)" }}
@@ -138,11 +138,11 @@ export function Header(p: Props) {
                   <path d="M0 1h22M0 7h14M0 13h22" stroke="currentColor" strokeWidth="1.6" />
                 </svg>
               </button>
-              <ul className="hidden items-center gap-1 lg:flex">
+              <ul className="hidden items-center gap-0 lg:flex xl:gap-1">
                 <li onMouseEnter={openMega}>
                   <Link
                     href={p.shopHref}
-                    className="flex h-11 items-center gap-1.5 rounded-full px-3.5 text-[0.92rem] font-medium hover:bg-current/5"
+                    className="flex h-11 items-center gap-1.5 whitespace-nowrap rounded-full px-2 text-[0.86rem] font-medium hover:bg-current/5 xl:px-3.5 xl:text-[0.92rem]"
                     aria-expanded={mega}
                     aria-haspopup="true"
                     onFocus={openMega}
@@ -161,7 +161,7 @@ export function Header(p: Props) {
                     <Link
                       href={n.href}
                       className={clsx(
-                        "flex h-11 items-center rounded-full px-3.5 text-[0.92rem] font-medium hover:bg-current/5",
+                        "flex h-11 items-center whitespace-nowrap rounded-full px-2 text-[0.86rem] font-medium hover:bg-current/5 xl:px-3.5 xl:text-[0.92rem]",
                         pathname.startsWith(n.href) && "underline decoration-poppy decoration-2 underline-offset-[6px]",
                       )}
                     >

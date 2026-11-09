@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, deskMotion } from "@/lib/gsap";
 import { ScrubWords } from "@/components/ui/Reveal";
 
 const PATH = "M40 150 C 210 30, 360 210, 540 112 S 860 24, 1000 118 S 1130 176, 1160 120";
@@ -32,7 +32,7 @@ export function TodayRoute({ eyebrow, text, stops, stats }: { eyebrow: string; t
         const target = Number(c.dataset.count);
         const dec = target % 1 ? 1 : 0;
         const o = { v: 0 };
-        if (prefersReducedMotion()) return;
+        if (!deskMotion()) return; // phones: the real numbers, no counting
         c.textContent = (0).toFixed(dec);
         gsap.to(o, {
           v: target,
@@ -42,8 +42,8 @@ export function TodayRoute({ eyebrow, text, stops, stats }: { eyebrow: string; t
           onUpdate: () => (c.textContent = o.v.toFixed(dec).replace(".", ",")),
         });
       });
-      if (prefersReducedMotion()) {
-        place(1);
+      if (!deskMotion()) {
+        place(1); // phones: the route already drawn
         return;
       }
       gsap.set(path, { strokeDashoffset: len, strokeDasharray: `${len}` });

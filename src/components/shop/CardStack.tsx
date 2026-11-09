@@ -180,10 +180,18 @@ export function CardStack({ items, locale, tone = "light" }: { items: ProductLit
 }
 
 /** Days, hours, minutes and seconds to the end of the sale. */
+const WEEK = 7 * 86400 * 1000;
+
+/** The flowers of the week go on sale every week: a passed end date rolls on to the same moment next week. */
 export function SaleCountdown({ ends, locale, className }: { ends: string; locale: Locale; className?: string }) {
   const [left, setLeft] = useState<number | null>(null);
   useEffect(() => {
-    const tick = () => setLeft(Math.max(0, Math.floor((new Date(ends).getTime() - Date.now()) / 1000)));
+    const tick = () => {
+      const now = Date.now();
+      let end = new Date(ends).getTime();
+      if (end <= now) end += Math.ceil((now - end + 1) / WEEK) * WEEK;
+      setLeft(Math.floor((end - now) / 1000));
+    };
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);

@@ -7,7 +7,8 @@ import { reviewsFor } from "./reviews";
  * public/images/SOURCES.md. A real client would replace this file with a Shopify/ERP sync.
  */
 
-const SALE_ENDS = "2026-10-12T23:59:00+02:00";
+// a Sunday night; the countdown rolls it on week by week (flowers of the week)
+const SALE_ENDS = "2026-10-11T23:59:00+02:00";
 
 const round100 = (n: number) => Math.round(n / 100) * 100;
 

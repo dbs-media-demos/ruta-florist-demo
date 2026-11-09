@@ -20,6 +20,8 @@ import { Overlays } from "./Overlays";
 export function SiteChrome({ locale, children }: { locale: Locale; children: ReactNode }) {
   const d = getDictionary(locale);
   const h = (k: keyof typeof pagePaths) => pageHref(locale, k);
+  // routes with their own sticky bar: no phone bottom bar there
+  const barOff = [pagePaths.checkout[locale], locale === "sr" ? "/proizvod/" : "/en/product/"];
   const products = catalog.getProducts();
   const cats = catalog.getCategories();
   const cols = catalog.getCollections();
@@ -77,11 +79,12 @@ export function SiteChrome({ locale, children }: { locale: Locale; children: Rea
         orderHref={h("shop")}
         bagLabel={d.bag.title}
         phone={site.phone}
-        hideOn={[pagePaths.checkout[locale], locale === "sr" ? "/proizvod/" : "/en/product/"]}
+        hideOn={barOff}
+        demo={{ label: d.demoPill, dismiss: d.dismiss }}
       />
       <Overlays locale={locale} crossSells={crossSells} searchItems={searchItems} cartHref={h("cart")} checkoutHref={h("checkout")} shopHref={h("shop")} />
       <Announcer />
-      <DemoPill label={d.demoPill} dismiss={d.dismiss} />
+      <DemoPill label={d.demoPill} dismiss={d.dismiss} barOff={barOff} />
     </>
   );
 }

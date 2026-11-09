@@ -1,10 +1,14 @@
 import type { Locale } from "./i18n";
 import { delivery } from "./site";
 
-const rsd = new Intl.NumberFormat("sr-Latn-RS", { maximumFractionDigits: 0 });
-
-/** 4.900 RSD — the Serbian grouping is used in both languages, RSD is the shop currency. */
-export const formatRsd = (amount: number) => `${rsd.format(Math.round(amount))} RSD`;
+/**
+ * 4.900 RSD — the Serbian grouping is used in both languages, RSD is the shop currency.
+ * Grouped by hand (same output as Intl's sr-Latn-RS) so prices cost nothing during hydration.
+ */
+export const formatRsd = (amount: number) => {
+  const n = Math.round(amount);
+  return `${n < 0 ? "−" : ""}${String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ".")} RSD`;
+};
 
 /** ≈ €42 — shown next to RSD in English for the diaspora. */
 export const formatEur = (amount: number) => `≈ €${Math.round(amount / delivery.eurRate)}`;

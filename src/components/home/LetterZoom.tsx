@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, deskMotion } from "@/lib/gsap";
 
 /**
  * Scene 5: the word "Dorćol" is cut out of a garden-green wall with the studio behind it.
  * Scrolling flies the camera into the stroke of the "o" until the studio fills the screen,
- * then the story card rises over it.
+ * then the story card rises over it. Phones and reduced motion: the studio photo with the card on it, no pin.
  */
 export function LetterZoom({ word, eyebrow, title, text, link, href, image, charIndex = 1, caption = "Strahinjića bana 19" }: { word: string; eyebrow: string; title: string; text: string; link: string; href: string; image: string; charIndex?: number; caption?: string }) {
   const root = useRef<HTMLElement>(null);
@@ -18,7 +18,7 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image, char
   const [near, setNear] = useState(false);
   useEffect(() => {
     const el = root.current;
-    if (!el) return;
+    if (!el || !deskMotion()) return; // phones and reduced motion: the studio photo and the card, no mask
     const io = new IntersectionObserver(([e]) => e.isIntersecting && (setNear(true), io.disconnect()), { rootMargin: "150% 0px" });
     io.observe(el);
     return () => io.disconnect();
@@ -31,10 +31,6 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image, char
       const t = textEl.current;
       if (!sec || !s || !t) return;
       const q = gsap.utils.selector(sec);
-      if (prefersReducedMotion()) {
-        gsap.set(s, { opacity: 0 });
-        return;
-      }
       const origin = () => {
         // the left stroke of the first "o"
         const ext = t.getExtentOfChar(charIndex);
@@ -69,8 +65,8 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image, char
   );
 
   return (
-    <section ref={root} data-header-dark className="relative h-[280vh] motion-reduce:h-auto">
-      <div className="sticky top-0 h-[100svh] overflow-hidden motion-reduce:relative">
+    <section ref={root} data-header-dark className="relative desk:h-[280vh]">
+      <div className="relative h-[100svh] overflow-hidden desk:sticky desk:top-0">
         <div data-studio className="absolute inset-0">
           <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-ink/15" />
@@ -88,12 +84,12 @@ export function LetterZoom({ word, eyebrow, title, text, link, href, image, char
           <rect width="1600" height="900" fill="#17271f" mask="url(#dorcol-mask)" />
         </svg>
         )}
-        {!near && <div aria-hidden className="absolute inset-0 bg-ink" />}
+        {!near && <div aria-hidden className="absolute inset-0 hidden bg-ink desk:block" />}
         <div data-word-caption className="wrap pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+var(--ribbon-h)+1.5rem)] flex justify-between text-paper/80">
           <p className="t-eyebrow">{eyebrow}</p>
           <p className="t-eyebrow">{caption}</p>
         </div>
-        <div data-story className="wrap absolute inset-x-0 bottom-8 opacity-0 motion-reduce:opacity-100 md:bottom-14">
+        <div data-story className="wrap absolute inset-x-0 bottom-8 md:bottom-14 desk:opacity-0">
           <div className="theme-paper max-w-xl rounded-[1.75rem] p-7 shadow-[0_30px_80px_-30px_rgba(15,27,21,0.5)] md:p-10">
             <p className="t-eyebrow text-accent">{eyebrow}</p>
             <h2 className="t-h2 mt-3">{title}</h2>

@@ -12,6 +12,10 @@ if (typeof window !== "undefined") {
 export const prefersReducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/** Desktop scroll scenes: a big screen with a mouse, motion allowed. Phones and tablets get the finished state. */
+export const DESK_MOTION = "(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
+export const deskMotion = () => typeof window !== "undefined" && window.matchMedia(DESK_MOTION).matches;
+
 export const isTouch = () => typeof window !== "undefined" && window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
 export { gsap, ScrollTrigger, useGSAP };

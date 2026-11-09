@@ -21,6 +21,7 @@ export const home = {
     shop: { sr: "Poruči cveće", en: "Order flowers" } as L,
     build: { sr: "Napravi svoj buket", en: "Build your own" } as L,
     scroll: { sr: "Skrolujte da procveta", en: "Scroll to bloom" } as L,
+    note: { sr: "jutros sa veletržnice", en: "from this morning's market" } as L,
   },
   today: {
     eyebrow: { sr: "Od pijace do vrata", en: "From market to door" } as L,
