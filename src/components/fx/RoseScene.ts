@@ -49,7 +49,7 @@ import { ROSE_REST, ROSE_STILL_OPEN } from "./rose-frame";
  * one frame on the still-invisible canvas, which also builds the shadow programs and uploads the
  * buffers), so the hero keeps its still until then. Software rendering or a GPU the browser flags
  * as slow throws, and the still stays. The first 2 s live are watched: under ~45 fps on average, or
- * one frame over 100 ms after warm-up, the loop stops and `onSlow` hands back to the still.
+ * a 3rd frame over 100 ms (or one over 400 ms) after warm-up, the loop stops and `onSlow` hands back to the still.
  *
  * Desktop only: the hero imports this file inside the 3D gate and nowhere else.
  */
@@ -341,7 +341,12 @@ function leaflet(len: number, wid: number) {
 const PROBE_MS = 2000;
 const PROBE_MIN_FPS = 45;
 const PROBE_MAX_FRAME_MS = 100;
-const PROBE_WARMUP_FRAMES = 3;
+// The first frames after the rose appears pay one-off costs (the GPU's first real draw): on 18 Nov a
+// refresh's first frame took 371 ms on a PC that then ran 112 fps, and the hero dropped to the still.
+const PROBE_WARMUP_FRAMES = 5;
+// A hitch or two (a font, an image decode, another tab) isn't a slow computer: the 3rd one is, or one long freeze
+const PROBE_HITCHES = 3;
+const PROBE_FREEZE_MS = 400;
 const SOFTWARE_GL = /swiftshader|llvmpipe|softpipe|software|basic render/i;
 
 /** Hands the main thread back between setup steps, so none of them is one long freeze. */
@@ -636,8 +641,8 @@ export async function createRoseScene(canvas: HTMLCanvasElement, opts: { still?:
   let last = performance.now();
   let lastActive = last;
   let t0 = last;
-  // the first 2 s live: frames counted and the worst one kept, reset whenever the loop pauses
-  const probe = { on: !still, from: 0, frames: 0, worst: 0 };
+  // the first 2 s live: frames counted and the worst one kept, reset whenever the loop pauses (the hitches add up)
+  const probe = { on: !still, from: 0, frames: 0, warm: 0, worst: 0, hitches: 0 };
 
   const resize = () => {
     const r = canvas.getBoundingClientRect();
@@ -659,20 +664,23 @@ export async function createRoseScene(canvas: HTMLCanvasElement, opts: { still?:
   };
 
   const check = (now: number, gap: number) => {
-    if (!probe.from) {
+    if (!probe.from || probe.warm > 0) {
+      // warm-up frames don't count: the 2 s are timed from the last of them
+      probe.warm = probe.from ? probe.warm - 1 : PROBE_WARMUP_FRAMES;
       probe.from = now;
       probe.frames = 0;
       probe.worst = 0;
       return;
     }
     probe.frames++;
-    if (probe.frames > PROBE_WARMUP_FRAMES) probe.worst = Math.max(probe.worst, gap);
+    probe.worst = Math.max(probe.worst, gap);
+    const hitch = gap > PROBE_MAX_FRAME_MS && (++probe.hitches >= PROBE_HITCHES || gap > PROBE_FREEZE_MS);
     const span = now - probe.from;
-    if (span < PROBE_MS && probe.worst <= PROBE_MAX_FRAME_MS) return;
+    if (span < PROBE_MS && !hitch) return;
     probe.on = false;
     const fps = (probe.frames * 1000) / span;
-    const detail = { fps: Math.round(fps), worst: Math.round(probe.worst) };
-    if (fps < PROBE_MIN_FPS || probe.worst > PROBE_MAX_FRAME_MS) {
+    const detail = { fps: Math.round(fps), worst: Math.round(probe.worst), hitches: probe.hitches };
+    if (fps < PROBE_MIN_FPS || hitch) {
       performance.mark("rose:slow", { detail });
       stop();
       disposed = true; // no more frames; the owner frees the renderer after the fade

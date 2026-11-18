@@ -7,18 +7,30 @@
  */
 export const DESKTOP_3D_QUERY = "(min-width: 1024px) and (hover: hover) and (pointer: fine)";
 
-/** sessionStorage flag: a scene ran too slowly on this machine, so every scene stays a still for the rest of the visit. */
-const SLOW_KEY = "scale:3d-off";
+/**
+ * A scene that ran slow costs only that page load; two slow page loads keep every scene a still for
+ * the rest of the visit. One slow start (the GPU's first draw on a refresh, a hitch while the page
+ * was still loading) used to switch the 3D off for the whole tab: on 18 Nov every refresh got the still.
+ * The old "scale:3d-off" flag is no longer read, so a tab that set it gets the 3D back.
+ */
+const SLOW_KEY = "scale:3d-slow";
+const SLOW_LIMIT = 2;
+
+// This page load ran slow: the rest of it stays on stills (counted once per load)
+let slowHere = false;
 
 export function mark3DSlow() {
+  if (slowHere) return;
+  slowHere = true;
   try {
-    sessionStorage.setItem(SLOW_KEY, "1");
+    sessionStorage.setItem(SLOW_KEY, String(Number(sessionStorage.getItem(SLOW_KEY) || 0) + 1));
   } catch {}
 }
 
 function was3DSlow() {
+  if (slowHere) return true;
   try {
-    return sessionStorage.getItem(SLOW_KEY) === "1";
+    return Number(sessionStorage.getItem(SLOW_KEY) || 0) >= SLOW_LIMIT;
   } catch {
     return false;
   }

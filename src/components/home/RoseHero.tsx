@@ -132,7 +132,7 @@ export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneD
     const io = new IntersectionObserver(([en]) => rose.current?.setVisible(en.isIntersecting));
 
     let fade = 0;
-    // too slow on this machine: back to the still for the rest of the visit, then free the GPU
+    // too slow on this machine: back to the still (for this page load; two slow loads keep it for the visit), then free the GPU
     const onSlow = () => {
       mark3DSlow();
       window.removeEventListener("pointermove", onMove);
