@@ -44,7 +44,8 @@ export function Header(p: Props) {
   const megaTimer = useRef<number | null>(null);
   const menuBtn = useRef<HTMLButtonElement>(null);
   const firstMenuLink = useRef<HTMLAnchorElement>(null);
-  const isHome = pathname === p.homeHref;
+  // /v2 (the homepage without 3D) is a homepage too: its hero runs under the header
+  const isHome = pathname === p.homeHref || pathname === `${p.homeHref.replace(/\/$/, "")}/v2`;
   const count = bagCount(bag);
 
   // Dark sections under the header ([data-header-dark]) flip it to light-on-ink. Opaque either way: nothing shows through.

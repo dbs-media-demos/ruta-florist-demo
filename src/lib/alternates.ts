@@ -16,5 +16,7 @@ export function allPagePairs(): Localized<string>[] {
 /** pathname in `from` locale → the same page in the other locale (language switch). */
 export function alternateMap(from: Locale): Record<string, string> {
   const to: Locale = from === "sr" ? "en" : "sr";
-  return Object.fromEntries(allPagePairs().map((p) => [p[from], p[to]]));
+  // /v2 (the homepage without 3D) isn't in the sitemap, but its language switch stays on /v2
+  const v2: Localized<string> = { sr: "/v2", en: "/en/v2" };
+  return Object.fromEntries([...allPagePairs(), v2].map((p) => [p[from], p[to]]));
 }

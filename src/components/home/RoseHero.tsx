@@ -10,6 +10,7 @@ import { Stars } from "@/components/sections/ReviewsWall";
 import { after3DGate, mark3DSlow, stillMode, DESKTOP_3D_QUERY } from "@/lib/three-gate";
 import { ROSE_REST } from "@/components/fx/rose-frame";
 import type { RoseHandle } from "@/components/fx/RoseScene";
+import type { Rose2DHandle } from "@/components/fx/rose2d";
 
 declare global {
   interface Window {
@@ -21,6 +22,12 @@ type Copy = { eyebrow: string; line1: string; line2: string; sub: string; shop: 
 type Stop = { time: string; label: string };
 
 const STILL = { phone: "/hero/rose-phone.webp", desktop: "/hero/rose-desktop.webp" };
+/** /v2 on a wide screen draws its rose in 2D, so the 3D still is never fetched there. */
+const NO_IMAGE = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+const WIDE = "(min-width: 1024px)";
+
+/** "3d": the homepage (/), a live three.js rose on desktop. "2d": /v2, the same hero with a canvas-2D rose and no three.js. */
+export type HeroFx = "3d" | "2d";
 
 /**
  * Scene 0: a coral garden rose.
@@ -31,11 +38,14 @@ const STILL = { phone: "/hero/rose-phone.webp", desktop: "/hero/rose-desktop.web
  *   (too slow in its first 2 s, it fades back to the still for the visit). Scrolling opens it petal by petal,
  *   it turns to face the visitor, then the camera dives into its heart and the page opens onto paper.
  * - Phones and tablets: the still, the same words, no pin, zero bytes of three.js.
+ * - fx="2d" (/v2): on a wide screen the rose is drawn in canvas 2D (src/components/fx/rose2d.ts), seen
+ *   from above: a bud that opens on its own, then with the same scroll scene. No three.js, no WebGL.
+ *   Phones get exactly what / gives them.
  */
-export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneDisplay }: { locale: Locale; copy: Copy; day: Stop[]; shopHref: string; buildHref: string; phone: string; phoneDisplay: string }) {
+export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneDisplay, fx = "3d" }: { locale: Locale; copy: Copy; day: Stop[]; shopHref: string; buildHref: string; phone: string; phoneDisplay: string; fx?: HeroFx }) {
   const root = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const rose = useRef<RoseHandle | null>(null);
+  const rose = useRef<RoseHandle | Rose2DHandle | null>(null);
   const progress = useRef(0);
   const [live, setLive] = useState(false);
 
@@ -80,8 +90,41 @@ export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneD
     { scope: root },
   );
 
+  // /v2: the 2D rose, wide screens only (phones keep the still, as on /).
+  useEffect(() => {
+    if (fx !== "2d") return;
+    const section = root.current;
+    const wide = window.matchMedia(WIDE);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let dead = false;
+    const onMove = (e: PointerEvent) => rose.current?.setPointer((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1);
+    const io = new IntersectionObserver(([en]) => rose.current?.setVisible(en.isIntersecting));
+    const start = async () => {
+      if (dead || rose.current || !wide.matches || !canvas.current || !section) return;
+      const { createRose2D } = await import("@/components/fx/rose2d");
+      if (dead || rose.current || !canvas.current) return;
+      const handle = createRose2D(canvas.current, { reduced, onFirstFrame: () => setLive(true) });
+      rose.current = handle;
+      handle.setProgress(progress.current, true);
+      window.addEventListener("pointermove", onMove, { passive: true });
+      io.observe(section);
+    };
+    const onWide = () => void start();
+    wide.addEventListener("change", onWide);
+    void start();
+    return () => {
+      dead = true;
+      wide.removeEventListener("change", onWide);
+      window.removeEventListener("pointermove", onMove);
+      io.disconnect();
+      rose.current?.dispose();
+      rose.current = null;
+    };
+  }, [fx]);
+
   // The live rose: three.js is imported here, inside the gate, and nowhere else.
   useEffect(() => {
+    if (fx !== "3d") return;
     const section = root.current;
     const still = stillMode();
     let dead = false;
@@ -120,7 +163,7 @@ export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneD
       rose.current = handle;
       if (still) {
         canvas.current.style.opacity = "1";
-        window.__roseStill = () => rose.current!.snapshot();
+        window.__roseStill = () => handle.snapshot();
         return;
       }
       performance.mark("rose:ready");
@@ -145,7 +188,7 @@ export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneD
       rose.current = null;
       delete window.__roseStill;
     };
-  }, []);
+  }, [fx]);
 
   const [w1, ...rest] = copy.line2.split(" ");
 
@@ -189,7 +232,7 @@ export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneD
             style={{ ["--rx" as string]: `${ROSE_REST.cx * 100}%` }}
           >
             <picture>
-              <source media="(min-width: 1024px)" srcSet={STILL.desktop} width={1400} height={1400} />
+              <source media={WIDE} srcSet={fx === "2d" ? NO_IMAGE : STILL.desktop} width={1400} height={1400} />
               <img
                 data-still
                 src={STILL.phone}
@@ -202,10 +245,18 @@ export function RoseHero({ locale, copy, day, shopHref, buildHref, phone, phoneD
                 className={clsx(
                   "absolute inset-0 h-full w-full object-contain transition-opacity delay-300 duration-1000 max-lg:[mask-image:linear-gradient(to_bottom,#000_62%,transparent_96%)]",
                   live && "opacity-0",
+                  fx === "2d" && "lg:hidden",
                 )}
               />
             </picture>
-            <p data-note aria-hidden className="absolute bottom-[8%] left-[2%] w-[8.5rem] text-blush/90 lg:bottom-auto lg:left-[60%] lg:top-[56%] lg:w-[12rem] lg:rotate-[-4deg]">
+            <p
+              data-note
+              aria-hidden
+              className={clsx(
+                "absolute bottom-[8%] left-[2%] w-[8.5rem] text-blush/90 lg:bottom-auto lg:w-[12rem] lg:rotate-[-4deg]",
+                fx === "2d" ? "lg:left-[78%] lg:top-[70%]" : "lg:left-[60%] lg:top-[56%]",
+              )}
+            >
               <svg width="54" height="26" viewBox="0 0 54 26" className="mb-1.5 -scale-x-100 rotate-180 text-blush/70 max-lg:ml-10 max-lg:rotate-[200deg] max-lg:scale-x-100" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden>
                 <path d="M2 4c14 2 30 6 46 17M48 21l-7-1M48 21l-1-7" strokeLinecap="round" />
               </svg>

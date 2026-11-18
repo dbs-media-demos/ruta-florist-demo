@@ -4,7 +4,7 @@ import { home } from "@/content/home";
 import { catalog } from "@/lib/commerce";
 import { occasions } from "@/content/taxonomy";
 import { plans, savingPercent } from "@/content/subscriptions";
-import { RoseHero } from "@/components/home/RoseHero";
+import { RoseHero, type HeroFx } from "@/components/home/RoseHero";
 import { TodayRoute } from "@/components/home/TodayRoute";
 import { OccasionsTrack } from "@/components/home/OccasionsTrack";
 import { LetterZoom } from "@/components/home/LetterZoom";
@@ -21,7 +21,12 @@ import { Later } from "@/components/ui/Later";
 import { site } from "@/lib/site";
 import { getDictionary } from "@/i18n/dictionary";
 
-export function HomeView({ locale }: { locale: Locale }) {
+/**
+ * The homepage, one tree for both versions: `hero` switches only the hero.
+ * "3d" is / (the live three.js rose on desktop); "2d" is /v2 (a canvas-2D rose, no three.js anywhere).
+ * Everything below the hero is the same component tree, so a change lands in both.
+ */
+export function HomeView({ locale, hero = "3d" }: { locale: Locale; hero?: HeroFx }) {
   const h = (k: Parameters<typeof pageHref>[1]) => pageHref(locale, k);
   const all = catalog.getProducts();
   const lite = all.map(catalog.toLite);
@@ -34,6 +39,7 @@ export function HomeView({ locale }: { locale: Locale }) {
   return (
     <>
       <RoseHero
+        fx={hero}
         locale={locale}
         shopHref={h("shop")}
         buildHref={h("builder")}
